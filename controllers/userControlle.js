@@ -42,7 +42,7 @@ import generateToken from "../utils/generateToken.js";
 //     }
 // }
 
-export const resgister = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { name, email, password, phone, address, } = req.body;
 
