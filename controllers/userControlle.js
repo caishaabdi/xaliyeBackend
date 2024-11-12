@@ -7,10 +7,10 @@ import generateToken from "../utils/generateToken.js";
 // export const register = async (req, res) => {
 //     try {
 //         const {
-//             name, email, passsword, address, phone
+//             name, email, password, address, phone
 //         } = req.body;
 
-//         if (!name || !email || !passsword || !address || !phone) {
+//         if (!name || !email || !password || !address || !phone) {
 //             res.status(401).json({ message: "All Filds Are Required" });
 //         }
 //         const userExists = Users.findOne({ email })
@@ -20,7 +20,7 @@ import generateToken from "../utils/generateToken.js";
 //         }
 
 //         const Createuser = Users.create({
-//             name, email, passsword, address, phone
+//             name, email, password, address, phone
 //         })
 
 //         if (Createuser) {
@@ -28,7 +28,7 @@ import generateToken from "../utils/generateToken.js";
 //                 _id: Createuser._id,
 //                 name: Createuser.name,
 //                 email: Createuser.email,
-//                 passsword: Createuser.passsword,
+//                 password: Createuser.password,
 //                 address: Createuser.address,
 //                 phone: Createuser.phone,
 //                 token: generateToken(Createuser._id)
@@ -44,7 +44,7 @@ import generateToken from "../utils/generateToken.js";
 
 export const register = async (req, res) => {
     try {
-        const { name, email, passsword, address, phone } = req.body;
+        const { name, email, password, address, phone } = req.body;
         const isUserExists = await Users.findOne({
             email: email.toLowerCase,
         });
@@ -52,10 +52,10 @@ export const register = async (req, res) => {
             return res.status(400).json("email or username already exists");
         }
         const userInfo = new Users({
-            name, email, passsword, address, phone
+            name, email, password, address, phone
         });
         const RegistedUser = await userInfo.save();
-        userInfo.passsword = undefined;
+        userInfo.password = undefined;
         return res.status(201).json(RegistedUser);
     } catch (err) {
         console.log("error at registring ", err.message);
@@ -66,14 +66,17 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, passsword } = req.body;
-        const user = Users.findOne({ email });
-        if (user && passsword == user.passsword) {
+        const { email, password } = req.body;
+        const userExists = Users.findOne({ email });
+
+
+
+        if (!userExists && password == userExists.password) {
             res.status(200).json({
                 _id: Createuser._id,
                 name: Createuser.name,
                 email: Createuser.email,
-                passsword: Createuser.passsword,
+                password: Createuser.password,
                 address: Createuser.address,
                 phone: Createuser.phone,
                 token: generateToken(Createuser._id)
