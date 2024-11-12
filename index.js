@@ -26,6 +26,7 @@ import express from 'express';
 import connectDB from './Database/db.js'// Place this at the top
 import userRouter from './routers/userRouter.js';
 import dotenv from 'dotenv';
+import { register } from './controllers/userControlle.js';
 
 dotenv.config();
 
@@ -38,7 +39,8 @@ connectDB();
 app.use(express.json());
 
 // Routes
-app.use('/api/users', userRouter);
+// app.use('/api/users', userRouter);
+app.post('/api/users', register)
 
 // Start the server
 const port = process.env.PORT || 8000;
