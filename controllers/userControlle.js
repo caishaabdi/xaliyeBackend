@@ -1,5 +1,5 @@
-import Users from "../model/userModel.js";
-import generateToken from "../utils/generateToken.js";
+// import Users from "../model/userModel.js";
+// import generateToken from "../utils/generateToken.js";
 
 // export const register = async (req, res) => {
 //     try {
@@ -39,41 +39,86 @@ import generateToken from "../utils/generateToken.js";
 //     }
 // }
 
-export const register = async (req, res) => {
+// export const register = async (req, res) => {
 
+//     try {
+//         const { name, email, password, phone, address } = req.body;
+
+//         const userExists = await Users.findOne({ email })
+//         if (userExists) {
+//             return res.status(400).json("User already exist");
+//         }
+
+
+//         const user = new Users({
+//             name, email, password, address, phone
+//         })
+
+//         await user.save();
+//         return res.status(201).json({
+//             message: 'User Registered succfessfly',
+//             user: {
+//                 name: user.name,
+//                 email: user.email,
+//                 phone: user.phone,
+//                 address: user.address,
+//                 password: user.password,
+//                 token: generateToken(user._id)
+//             }
+//         })
+
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'server error You Knoww..' });
+//     }
+
+// }
+import Users from "../model/userModel.js";
+import generateToken from "../utils/generateToken.js";
+
+export const register = async (req, res) => {
     try {
         const { name, email, password, phone, address } = req.body;
 
-        const userExists = await Users.findOne({ email })
+        // Check if user already exists
+        const userExists = await Users.findOne({ email });
         if (userExists) {
-            return res.status(400).json("User already exist");
+            return res.status(400).json({ message: "User already exists" });
+        } else {
+
+            // Hash password before saving
+            // const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Create new user instance
+            const user = new Users({
+                name,
+                email,
+                password, // Save hashed password
+                address,
+                phone
+            });
+
+            // Save user to the database
+            await user.save();
+
+            // Respond with user info and token
+            return res.status(201).json({
+                message: 'User Registered successfully',
+                user: {
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    address: user.address,
+                    password: user.password,
+                    token: generateToken(user._id) // Assume generateToken is a function that generates a JWT
+                }
+            });
         }
-
-
-        const user = new Users({
-            name, email, password, address, phone
-        })
-
-        await user.save();
-        return res.status(201).json({
-            message: 'User Registered succfessfly',
-            user: {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                address: user.address,
-                password: user.password,
-                token: generateToken(user._id)
-            }
-        })
-
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'server error You Knoww..' });
+        console.error('Registration error:', error); // Log error
+        return res.status(500).json({ message: 'Server error. Please try again later.' });
     }
-
-}
-
+};
 
 export const login = async (req, res) => {
     try {
@@ -97,6 +142,5 @@ export const login = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ error: error.message })
-
     }
 }
