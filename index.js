@@ -18,7 +18,7 @@ app.use(express.json());
 app.use('/api/users', userRouter);
 app.use('/api/product', productRouter);
 app.get('/', (req, res) => res.send("Hello word..."));
-app.post('/api/product/all', (req, res) => res.send("Hello product..."));
+app.post('https://xaliyebackend.onrender.com/api/product/all', (req, res) => res.send("Hello product..."));
 
 // Start the server
 const PORT = process.env.PORT || 8000;
