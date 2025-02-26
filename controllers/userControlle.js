@@ -136,6 +136,8 @@ export const login = async (req, res) => {
                 token: generateToken(user._id)
 
             })
+
+            await user.save();
         } else {
             return res.status(404).json({ message: ' Invalid Email or password' })
         }
@@ -144,3 +146,31 @@ export const login = async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 }
+
+
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params; // Assuming the ID is passed as a parameter in the URL
+
+        // Find the user by the given ID
+        const user = await Users.findById(id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user details (excluding sensitive information like password)
+        return res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            token: generateToken(user._id) // Optional, depending on use case
+        });
+
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+};
